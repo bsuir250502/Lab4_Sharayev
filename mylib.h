@@ -1,28 +1,15 @@
+#ifndef _MYLIB_H_
+#define _MYLIB_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mylib.h"
 
-char read_argument(int, char **);
+#define SIZE( x ) (sizeof(x))/(sizeof(*x))
 
+char *myfgets(char *, int);
+int print_manual(void);
+int input_number_in_range(int, int);
+int confirm_choice(void);
 
-int main(int argc, char **argv)
-{
-    if (read_argument(argc, argv) == 'h') {
-        print_manual();
-        return 0;
-    }
-
-    return 0;
-}
-
-char read_argument(int argc, char **argv)
-{
-    if (argc == 2) {
-        if (!(strcmp(argv[1], "-h"))) {
-            return 'h';
-        }
-    }
-
-    return '0';
-}
+#endif
