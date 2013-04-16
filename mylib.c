@@ -1,28 +1,62 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "mylib.h"
 
-char read_argument(int, char **);
-
-
-int main(int argc, char **argv)
+int confirm_choice(void)
 {
-    if (read_argument(argc, argv) == 'h') {
-        print_manual();
-        return 0;
+    char arg[3];
+    printf("Set (Y/N)\n");
+    while (1) {
+        myfgets(arg, 3);
+        if (arg[0] == 'Y' || arg[0] == 'y') {
+            return 1;
+        }
+        if (arg[0] == 'N' || arg[0] == 'n') {
+            return 0;
+        } else {
+            printf("Wrong key");
+        }
     }
 
     return 0;
 }
 
-char read_argument(int argc, char **argv)
+char *myfgets(char *str, int num)
 {
-    if (argc == 2) {
-        if (!(strcmp(argv[1], "-h"))) {
-            return 'h';
-        }
+    if (!(fgets(str, num, stdin))) {
+        return 0;
+    } else {
+        str[strlen(str) - 1] = '\0';
     }
 
-    return '0';
+    return str;
+}
+
+int print_manual(void)
+{
+    char input_buffer[128];
+    FILE *fp = fopen("Manual.txt", "r");
+    while (fgets(input_buffer, SIZE(input_buffer), fp)) {
+        printf("%s", input_buffer);
+    }
+    printf("\n");
+    fclose(fp);
+
+    return 0;
+}
+
+int input_number_in_range(int from, int to)
+{
+    int n;
+    char *endptr;
+    char input_buffer[128];
+    int first = 1;
+    do {
+        if (!first) {
+            printf("Please enter number between %d and %d\n", from, to);
+        }
+        myfgets(input_buffer, 128);
+        n = strtol(input_buffer, &endptr, 10);
+        first = 0;
+    } while (*endptr || n < from || n > to);
+
+    return n;
 }
