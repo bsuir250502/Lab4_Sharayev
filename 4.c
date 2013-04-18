@@ -16,14 +16,13 @@ typedef struct ring {
 typedef struct node {
     char key[MAX_KEY_LENGTH];
     ring_t *ring;
-    int data;
     struct node *left;
     struct node *right;
 } node_t;
 
 int display_tree(node_t *);
 char read_argument(int, char **);
-int attach_node(node_t * , char *, int );
+int attach_node(node_t * , char *);
 int add_node(node_t * );
 int attach_ring(ring_t *);
 int attach_elem(ring_t **, char *);
@@ -37,7 +36,7 @@ int main(int argc, char **argv)
 
     node_t *root;
     root = (node_t *)calloc(1, sizeof(*root));
-    root->data = 5;
+
     printf("Specify root key:\n");
     myfgets(root->key, MAX_KEY_LENGTH);
     while(add_node(root));
@@ -62,7 +61,6 @@ int display_tree(node_t * root)
     if (!root) {
         return 0;
     }
-    printf("(%d)", root->data);
     display_tree(root->right);
     display_tree(root->left);
 
@@ -71,7 +69,6 @@ int display_tree(node_t * root)
 
 int add_node(node_t * root)
 {
-    int data;
     char key[MAX_KEY_LENGTH];
 
     printf("Specify key (\"end\"to stop input):  ");
@@ -79,14 +76,12 @@ int add_node(node_t * root)
     if (!strncmp(key, "end", 3)) {
         return 0;
     }
-    printf("Specify data:  ");
-    data = input_number_in_range(0, 1000);
-    attach_node(root, key, data);
+    attach_node(root, key);
 
     return 1;
 }
 
-int attach_node(node_t * root, char *key, int data) 
+int attach_node(node_t * root, char *key) 
 {
     node_t *tmp;
     tmp = root;
@@ -96,7 +91,6 @@ int attach_node(node_t * root, char *key, int data)
                 tmp = tmp->left;
             } else {
                 tmp->left= (node_t *)calloc(1,sizeof(*tmp->left));
-
                 tmp = tmp->left;
                 /*break;*/
             }
@@ -111,7 +105,6 @@ int attach_node(node_t * root, char *key, int data)
         }
     strncpy(tmp->key, key, MAX_KEY_LENGTH);
     attach_ring(tmp->ring);
-    tmp->data = data;
 
     return 0;
 }
