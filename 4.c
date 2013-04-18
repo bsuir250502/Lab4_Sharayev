@@ -26,6 +26,7 @@ int attach_node(node_t * , char *);
 int add_node(node_t * );
 int attach_ring(ring_t *);
 int attach_elem(ring_t **, char *);
+int display_ring(ring_t *);
 
 int main(int argc, char **argv)
 {
@@ -61,6 +62,7 @@ int display_tree(node_t * root)
     if (!root) {
         return 0;
     }
+    display_ring(root->ring);
     display_tree(root->right);
     display_tree(root->left);
 
@@ -92,7 +94,6 @@ int attach_node(node_t * root, char *key)
             } else {
                 tmp->left= (node_t *)calloc(1,sizeof(*tmp->left));
                 tmp = tmp->left;
-                /*break;*/
             }
         } else {
             if (tmp->right) {
@@ -100,7 +101,6 @@ int attach_node(node_t * root, char *key)
             } else {
                 tmp->right = (node_t *)calloc(1,sizeof(*tmp->right));
                 tmp = tmp->right;
-                 /*break;*/
             }
         }
     strncpy(tmp->key, key, MAX_KEY_LENGTH);
@@ -144,6 +144,23 @@ int attach_elem(ring_t **ring, char *string)
         (*ring)->right = new_elem->left;
         (*ring)->right = new_elem->left;
     }
+
+    return 0;
+}
+
+int display_ring(ring_t *ring) 
+{
+    ring_t *tmp;
+    if(!ring){
+        return 0;
+    }
+    tmp = ring;
+
+    do {
+        printf("%s\n", tmp->string);
+        tmp = tmp->left;
+    }
+    while(tmp != ring);
 
     return 0;
 }
