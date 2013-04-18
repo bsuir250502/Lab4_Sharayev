@@ -26,6 +26,8 @@ int main(int argc, char **argv)
     }
 
     node_t root;
+    root.left = NULL;
+    root.right = NULL;
     root.data = 5;
     printf("Specify root key:\n");
     myfgets(root.key, MAX_KEY_LENGTH);
@@ -84,7 +86,8 @@ int attach_node(node_t * root, char *key, int data)
             if (tmp->left) {
                 tmp = tmp->left;
             } else {
-                tmp->left = (node_t *)malloc(sizeof(*tmp->left));
+                tmp->left= (node_t *)calloc(1,sizeof(*tmp->left));
+
                 tmp = tmp->left;
                 /*break;*/
             }
@@ -92,7 +95,7 @@ int attach_node(node_t * root, char *key, int data)
             if (tmp->right) {
                 tmp = tmp->right;
             } else {
-                tmp->right = (node_t *)malloc(sizeof(*tmp->right));
+                tmp->right = (node_t *)calloc(1,sizeof(*tmp->right));
                 tmp = tmp->right;
                  /*break;*/
             }
