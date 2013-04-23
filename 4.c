@@ -7,6 +7,8 @@
 #define MAX_STRING_LENGTH 100
 #define MAX_WORD_LENGTH 10
 
+typedef enum {WALK, DISPLAY} mode_t;
+
 typedef struct ring {
     char string[MAX_STRING_LENGTH];
     struct ring *right;
@@ -20,14 +22,15 @@ typedef struct node {
     struct node *right;
 } node_t;
 
-int display_tree(node_t *);
+int walk_through_the_tree(node_t *, mode_t);
 char read_argument(int, char **);
 int attach_node(node_t * , char *);
 int add_node(node_t * );
 int attach_ring(ring_t **);
 int attach_elem(ring_t **, char *);
-int display_ring(ring_t *);
+int walk_through_the_ring(ring_t *, mode_t);
 int find_word(char *, char *);
+int check_inputted_word(node_t *, char *);
 
 int main(int argc, char **argv)
 {
@@ -37,15 +40,31 @@ int main(int argc, char **argv)
     }
 
     node_t *root;
+    char input_buffer[MAX_WORD_LENGTH];
     root = (node_t *)calloc(1, sizeof(*root));
-    attach_ring(root->ring);
+    //attach_ring(root->ring);
     printf("Specify root key:\n");
     myfgets(root->key, MAX_KEY_LENGTH);
     while(add_node(root));
-    display_tree(root);
+    walk_through_the_tree(root, DISPLAY);
     puts(""); 
+    printf("Specyfy requied word to start search\n");
+    while(1) {
+        myfgets(input_buffer, MAX_WORD_LENGTH);
+        if(strlen(input_buffer) ){
+            break;
+        }
+        printf("You don't print anything\n");
+    }
+    check_inputted_word(root, input_buffer);
 
     return 0;
+}
+
+int check_inputted_word(node_t *root, char *word)
+{
+
+   return 0; 
 }
 
 char read_argument(int argc, char **argv)
@@ -59,15 +78,19 @@ char read_argument(int argc, char **argv)
     return '0';
 }
 
-int display_tree(node_t * root)
+int walk_through_the_tree(node_t * root, mode_t DISPLAY)
 {
     if (!root) {
         return 0;
     }
-    printf("(%s)", root->key);
-    //display_ring(*(root->ring));
-    display_tree(root->right);
-    display_tree(root->left);
+    if(DISPLAY){
+        printf("(%s)", root->key);
+        //walk_through_the_ring(*(root->ring, DISPLAY));  
+    }
+    
+    
+    walk_through_the_tree(root->right, DISPLAY);
+    walk_through_the_tree(root->left, DISPLAY);
 
     return 0;
 }
@@ -153,7 +176,7 @@ int attach_elem(ring_t **ring, char *string)
     return 0;
 }
 
-int display_ring(ring_t *ring) 
+int walk_through_the_ring(ring_t *ring, mode_t DISPLAY) 
 {
     ring_t *tmp;
     if(!ring){
@@ -162,7 +185,9 @@ int display_ring(ring_t *ring)
     tmp = ring;
 
     do {
-        printf("%s\n", tmp->string);
+        if(DISPLAY){
+            printf("%s\n", tmp->string);    
+        }
         tmp = tmp->left;
     }
     while(tmp != ring);
