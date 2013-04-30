@@ -25,10 +25,10 @@ int create_node(node_t * );
 int attach_node(node_t * , char *);
 int create_ring(ring_t **);
 int attach_elem(ring_t **, char *);
-int walk_through_the_tree(node_t *);
-int walk_through_the_ring(ring_t *);
+int walk_through_the_tree(node_t *, char *);
+int walk_through_the_ring(ring_t *, char *);
 int find_word(char *, char *);
-int check_inputted_word(node_t *, char *);
+int input_and_check_word(node_t *);
 
 // Temp functions
 int display_tree(node_t *);
@@ -41,9 +41,9 @@ int main(int argc, char **argv)
         print_manual();
         return 0;
     }
-
+    
     node_t *root;
-    char input_buffer[MAX_WORD_LENGTH];
+    
     root = (node_t *)calloc(1, sizeof(*root));
     printf("Specify root key:\n");
     myfgets(root->key, MAX_KEY_LENGTH);
@@ -51,24 +51,33 @@ int main(int argc, char **argv)
     while(create_node(root));
     display_tree(root);
     //walk_through_the_tree(root);
-    puts(""); 
-    printf("Specyfy requied word to start search\n");
-    while(1) {
-        myfgets(input_buffer, MAX_WORD_LENGTH);
-        if(strlen(input_buffer) ){
-            break;
-        }
-        printf("You don't have typed anything\n");
-    }
-    check_inputted_word(root, input_buffer);
+
+    while(input_and_check_word(root));
 
     return 0;
 }
 
-int check_inputted_word(node_t *root, char *word)
+int input_and_check_word(node_t *root)
 {
+    int counter;
+    char buffer[MAX_WORD_LENGTH];
 
-   return 0; 
+    printf("\nSpecyfy requied word to start search(end, to exit)\n");
+    while(1) {
+        myfgets(buffer, MAX_WORD_LENGTH);
+        if(!(strncmp(buffer, "end", 3)) ){
+            return 0;
+        }
+        else if(strlen(buffer) ){
+            break;
+        }
+        printf("You don't have typed anything\n");
+    }
+
+    counter = walk_through_the_tree(root, buffer);
+    printf("The word occurs %d times", counter);
+
+    return 1; 
 }
 
 char read_argument(int argc, char **argv)
@@ -82,21 +91,21 @@ char read_argument(int argc, char **argv)
     return '0';
 }
 
-int walk_through_the_tree(node_t * root )
+int walk_through_the_tree(node_t * root, char *word)
 {
     if (!root) {
         return 0;
     }
+    static int counter;
+    //printf("(%s)", root->key);
+    counter += walk_through_the_ring(*(root->ring), word);  
+    
+    
+    
+    walk_through_the_tree(root->right, word);
+    walk_through_the_tree(root->left, word);
 
-    printf("(%s)", root->key);
-    walk_through_the_ring(*(root->ring));  
-    
-    
-    
-    walk_through_the_tree(root->right);
-    walk_through_the_tree(root->left);
-
-    return 0;
+    return counter;
 }
 
 int create_node(node_t * root)
@@ -179,22 +188,25 @@ int attach_elem(ring_t **ring, char *string)
     return 0;
 }
 
-int walk_through_the_ring(ring_t *ring) 
+int walk_through_the_ring(ring_t *ring, char *word) 
 {
     if(!ring){
         return 0;
     }
 
+    int counter;
     ring_t *tmp;
     tmp = ring;
 
     do {
-        printf("%s\n", tmp->string);    
+        if((counter = find_word(tmp->string, word)) != 0) {
+            printf("%s\n", tmp->string);
+        }   
         tmp = tmp->left;
     }
     while(tmp != ring);
 
-    return 0;
+    return counter;
 }
 
 int find_word(char *str, char *word) 
