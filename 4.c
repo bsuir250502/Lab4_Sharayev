@@ -7,8 +7,6 @@
 #define MAX_STRING_LENGTH 100
 #define MAX_WORD_LENGTH 10
 
-typedef enum {WALK, DISPLAY} mode_t;
-
 typedef struct ring {
     char string[MAX_STRING_LENGTH];
     struct ring *right;
@@ -22,15 +20,20 @@ typedef struct node {
     struct node *right;
 } node_t;
 
-int walk_through_the_tree(node_t *, mode_t);
 char read_argument(int, char **);
+int create_node(node_t * );
 int attach_node(node_t * , char *);
-int add_node(node_t * );
-int attach_ring(ring_t **);
+int create_ring(ring_t **);
 int attach_elem(ring_t **, char *);
-int walk_through_the_ring(ring_t *, mode_t);
+int walk_through_the_tree(node_t *);
+int walk_through_the_ring(ring_t *);
 int find_word(char *, char *);
 int check_inputted_word(node_t *, char *);
+
+// Temp functions
+int display_tree(node_t *);
+int display_ring(ring_t *);
+//
 
 int main(int argc, char **argv)
 {
@@ -42,11 +45,12 @@ int main(int argc, char **argv)
     node_t *root;
     char input_buffer[MAX_WORD_LENGTH];
     root = (node_t *)calloc(1, sizeof(*root));
-    //attach_ring(root->ring);
     printf("Specify root key:\n");
     myfgets(root->key, MAX_KEY_LENGTH);
-    while(add_node(root));
-    walk_through_the_tree(root, DISPLAY);
+    create_ring(root->ring);
+    while(create_node(root));
+    display_tree(root);
+    //walk_through_the_tree(root);
     puts(""); 
     printf("Specyfy requied word to start search\n");
     while(1) {
@@ -54,7 +58,7 @@ int main(int argc, char **argv)
         if(strlen(input_buffer) ){
             break;
         }
-        printf("You don't print anything\n");
+        printf("You don't have typed anything\n");
     }
     check_inputted_word(root, input_buffer);
 
@@ -78,24 +82,24 @@ char read_argument(int argc, char **argv)
     return '0';
 }
 
-int walk_through_the_tree(node_t * root, mode_t DISPLAY)
+int walk_through_the_tree(node_t * root )
 {
     if (!root) {
         return 0;
     }
-    if(DISPLAY){
-        printf("(%s)", root->key);
-        //walk_through_the_ring(*(root->ring, DISPLAY));  
-    }
+
+    printf("(%s)", root->key);
+    walk_through_the_ring(*(root->ring));  
     
     
-    walk_through_the_tree(root->right, DISPLAY);
-    walk_through_the_tree(root->left, DISPLAY);
+    
+    walk_through_the_tree(root->right);
+    walk_through_the_tree(root->left);
 
     return 0;
 }
 
-int add_node(node_t * root)
+int create_node(node_t * root)
 {
     char key[MAX_KEY_LENGTH];
 
@@ -131,15 +135,15 @@ int attach_node(node_t * root, char *key)
             }
     }
     strncpy(tmp->key, key, MAX_KEY_LENGTH);
-    //attach_ring(tmp->ring);
+    create_ring(tmp->ring);
 
     return 0;
 }
 
-int attach_ring(ring_t **ring)
+int create_ring(ring_t **ring)
 {
     char buffer[MAX_STRING_LENGTH];
-    *ring = (ring_t *) calloc(1, sizeof(**ring));
+    ring = (ring_t **) calloc(1, sizeof(*ring));
     while(1) {
         printf("Enter string(end, to stop reading):\n");
         myfgets(buffer, MAX_STRING_LENGTH);
@@ -156,7 +160,6 @@ int attach_ring(ring_t **ring)
 int attach_elem(ring_t **ring, char *string) 
 {
     ring_t *new_elem;
-    printf("work");
     new_elem = (ring_t *) calloc(1, sizeof(*new_elem));
     strncpy(new_elem->string, string, MAX_STRING_LENGTH);
 
@@ -176,18 +179,17 @@ int attach_elem(ring_t **ring, char *string)
     return 0;
 }
 
-int walk_through_the_ring(ring_t *ring, mode_t DISPLAY) 
+int walk_through_the_ring(ring_t *ring) 
 {
-    ring_t *tmp;
     if(!ring){
         return 0;
     }
+
+    ring_t *tmp;
     tmp = ring;
 
     do {
-        if(DISPLAY){
-            printf("%s\n", tmp->string);    
-        }
+        printf("%s\n", tmp->string);    
         tmp = tmp->left;
     }
     while(tmp != ring);
@@ -208,4 +210,37 @@ int find_word(char *str, char *word)
     }
 
     return counter;
+}
+
+// Temp functions
+int display_tree(node_t * root)
+{
+    if (!root) {
+        return 0;
+    }
+    printf("(%s)", root->key);
+    display_ring(*(root->ring));
+    
+    
+    display_tree(root->right);
+    display_tree(root->left);
+
+    return 0;
+}
+
+int display_ring(ring_t *ring) 
+{
+    if(!ring){
+        return 0;
+    }
+    ring_t *tmp;
+    tmp = ring;
+    puts("The contents of the ring:");
+    do {
+        printf("%s\n", tmp->string);    
+        tmp = tmp->left;
+    }
+    while(tmp != ring);
+
+    return 0;
 }
