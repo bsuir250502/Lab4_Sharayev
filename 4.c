@@ -75,7 +75,7 @@ int input_and_check_word(node_t *root)
     }
 
     counter = walk_through_the_tree(root, buffer);
-    printf("The word occurs %d times", counter);
+    printf("The word occurs %d times\n", counter);
 
     return 1; 
 }
