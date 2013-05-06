@@ -42,7 +42,7 @@ int main(int argc, char **argv)
         return 0;
     }
     root = (node_t *)calloc(1, sizeof(*root));
-    printf("Specify root key:\n");
+    printf("Specify root key:  ");
     myfgets(root->key, MAX_KEY_LENGTH);
     create_ring(&(root->ring));
     while(create_node(root));
@@ -108,9 +108,9 @@ int attach_node(node_t * root, char *key)
 int create_ring(ring_t **ring)
 {
     char buffer[MAX_STRING_LENGTH];
-    
+    printf("Enter strings(end, to stop reading):\n");
     while(1) {
-        printf("Enter string(end, to stop reading):\n");
+        printf("    "); 
         myfgets(buffer, MAX_STRING_LENGTH);
         if(!strncmp(buffer, "end", 3)){
             return 0;
