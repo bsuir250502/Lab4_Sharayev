@@ -47,7 +47,6 @@ int main(int argc, char **argv)
     create_ring(&(root->ring));
     while(create_node(root));
     //display_tree(root);
-    //walk_through_the_tree(root,"some string");
 
     while(input_and_check_word(root));
 
