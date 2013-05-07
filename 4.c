@@ -147,6 +147,7 @@ int walk_through_the_ring(ring_t *ring, char *word)
 {
     int counter;
     ring_t *tmp;
+
     if(!ring){
         return 0;
     }
