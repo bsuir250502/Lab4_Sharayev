@@ -1,6 +1,6 @@
-OBJ = 4.o mylib.o
-CFLAGS = -Wall -std=c99 -pedantic
-BINARY = 4
+OBJ = lab4.o optlib.o service.o
+CFLAGS = -Wall -std=c89 -pedantic
+BINARY = lab4
 all: $(BINARY)
 
 $(BINARY): $(OBJ)
