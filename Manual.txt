@@ -1,3 +1,10 @@
 ____________________________
           Manual
 ____________________________
+
+1) Type containings of the tree
+    - Specify key to the node (print "end" stop input of the tree)
+    - Specify containing of the ring (print "end" to stop input of strings in the ring)
+2) Set word to start search (to stop search pleace type "end").
+
+After you had specifyed word program displays strings, where the word appeares and print number of word occurings.
