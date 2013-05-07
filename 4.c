@@ -246,9 +246,9 @@ int input_and_check_word(node_t *root)
         printf("You don't have typed anything\n");
         */
     //}
-
+    printf("The word occurs at:\n");
     counter = walk_through_the_tree(root, buffer);
-    printf("The word occurs %d times\n", counter);
+    printf("\n%d times\n", counter);
 
     return 0; 
 }
