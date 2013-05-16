@@ -210,3 +210,4 @@ int input_and_check_word(node_t * root)
 
     return 1;
 }
+
