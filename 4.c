@@ -32,6 +32,7 @@ int input_and_check_word(node_t *);
 int main(int argc, char **argv)
 {
     node_t *root;
+
     if (read_argument(argc, argv) == 'h') {
         print_manual();
         return 0;
@@ -109,7 +110,6 @@ int create_ring(ring_t ** ring)
             return 0;
         }
         attach_elem(ring, buffer);
-
     }
 
     return 0;
@@ -199,10 +199,9 @@ int input_and_check_word(node_t * root)
     myfgets(buffer, MAX_WORD_LENGTH);
     if (!(strncmp(buffer, "end", 3))) {
         return 0;
-    }
-    else if(!(strlen(buffer)) ) {
-       printf("You don't have typed anything, try again\n");
-       return 1;
+    } else if (!(strlen(buffer))) {
+        printf("You don't have typed anything, try again\n");
+        return 1;
     }
 
     printf("The word occurs at:\n");
