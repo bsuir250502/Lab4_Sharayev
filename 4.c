@@ -20,19 +20,14 @@ typedef struct node {
 } node_t;
 
 char read_argument(int, char **);
-int create_node(node_t * );
-int attach_node(node_t * , char *);
+int create_node(node_t *);
+int attach_node(node_t *, char *);
 int create_ring(ring_t **);
 int attach_elem(ring_t **, char *);
 int walk_through_the_tree(node_t *, char *);
 int walk_through_the_ring(ring_t *, char *);
 int find_word(char *, char *);
 int input_and_check_word(node_t *);
-
-// Temp functions
-int display_tree(node_t *);
-int display_ring(ring_t *);
-//
 
 int main(int argc, char **argv)
 {
@@ -41,14 +36,12 @@ int main(int argc, char **argv)
         print_manual();
         return 0;
     }
-    root = (node_t *)calloc(1, sizeof(*root));
+    root = (node_t *) calloc(1, sizeof(*root));
     printf("Specify root key:  ");
     myfgets(root->key, MAX_KEY_LENGTH);
     create_ring(&(root->ring));
-    while(create_node(root));
-    //display_tree(root);
-
-    while(input_and_check_word(root));
+    while (create_node(root));
+    while (input_and_check_word(root));
 
     return 0;
 }
@@ -78,26 +71,26 @@ int create_node(node_t * root)
     return 1;
 }
 
-int attach_node(node_t * root, char *key) 
+int attach_node(node_t * root, char *key)
 {
     node_t *tmp;
     tmp = root;
-    while(1) {
+    while (1) {
         if (0 < strncmp(key, tmp->key, MAX_KEY_LENGTH)) {
             if (tmp->left) {
                 tmp = tmp->left;
             } else {
-                tmp->left= (node_t *)calloc(1,sizeof(*tmp->left));
+                tmp->left = (node_t *) calloc(1, sizeof(*tmp->left));
                 tmp = tmp->left;
                 break;
             }
         } else if (tmp->right) {
-                tmp = tmp->right;
-            } else {
-                tmp->right = (node_t *)calloc(1,sizeof(*tmp->right));
-                tmp = tmp->right;
-                break;
-            }
+            tmp = tmp->right;
+        } else {
+            tmp->right = (node_t *) calloc(1, sizeof(*tmp->right));
+            tmp = tmp->right;
+            break;
+        }
     }
     strncpy(tmp->key, key, MAX_KEY_LENGTH);
     create_ring(&(tmp->ring));
@@ -105,17 +98,16 @@ int attach_node(node_t * root, char *key)
     return 0;
 }
 
-int create_ring(ring_t **ring)
+int create_ring(ring_t ** ring)
 {
     char buffer[MAX_STRING_LENGTH];
     printf("Enter strings(end, to stop reading):\n");
-    while(1) {
-        printf("    "); 
+    while (1) {
+        printf("    ");
         myfgets(buffer, MAX_STRING_LENGTH);
-        if(!strncmp(buffer, "end", 3)){
+        if (!strncmp(buffer, "end", 3)) {
             return 0;
         }
-        //*ring = (ring_t *) calloc(1, sizeof(ring_t *));
         attach_elem(ring, buffer);
 
     }
@@ -123,19 +115,17 @@ int create_ring(ring_t **ring)
     return 0;
 }
 
-int attach_elem(ring_t **ring, char *string) 
+int attach_elem(ring_t ** ring, char *string)
 {
     ring_t *new_elem;
 
     new_elem = (ring_t *) calloc(1, sizeof(*new_elem));
     strncpy(new_elem->string, string, MAX_STRING_LENGTH);
 
-    if(!*ring)
-    {
+    if (!*ring) {
         *ring = new_elem;
         (*ring)->next = *ring;
-    }
-    else {
+    } else {
         new_elem->next = (*ring)->next;
         (*ring)->next = new_elem;
     }
@@ -143,113 +133,81 @@ int attach_elem(ring_t **ring, char *string)
     return 0;
 }
 
-int walk_through_the_ring(ring_t *ring, char *word) 
+int walk_through_the_ring(ring_t * ring, char *word)
 {
-    int counter;
+    int counter = 0, buffer;
     ring_t *tmp;
 
-    if(!ring){
+    if (!ring) {
         return 0;
     }
     tmp = ring;
 
     do {
-        if((counter = find_word(tmp->string, word)) != 0) {
+        if ((buffer = find_word(tmp->string, word)) != 0) {
             printf("%s\n", tmp->string);
-        }   
+            counter += buffer;
+        }
         tmp = tmp->next;
     }
-    while(tmp != ring);
+    while (tmp != ring);
 
     return counter;
 }
 
 int walk_through_the_tree(node_t * root, char *word)
 {
-    static int counter;
+    int counter = 0;
     if (!root) {
         return 0;
     }
-    //printf("(%s)", root->key);
-    counter += walk_through_the_ring(root->ring, word);  
-    
-    
-    
-    walk_through_the_tree(root->right, word);
-    walk_through_the_tree(root->left, word);
+    counter += walk_through_the_ring(root->ring, word);
+
+    counter += walk_through_the_tree(root->right, word);
+    counter += walk_through_the_tree(root->left, word);
 
     return counter;
 }
 
-int find_word(char *str, char *word) 
+int find_word(char *str, char *word)
 {
     int counter = 0;
     char *p;
     p = str;
-    while(p){
+    while (p) {
         p = strstr(p, word);
-        if(p) {
+        if (p) {
             counter++;
+        } else {
+            break;
         }
+        while (*p != ' ' && *p)
+            p++;
     }
 
     return counter;
 }
 
-// Temp functions
-int display_tree(node_t * root)
-{
-    if (!root) {
-        return 0;
-    }
-    printf("(%s)", root->key);
-    display_ring(root->ring);
-    
-    
-    display_tree(root->right);
-    display_tree(root->left);
-
-    return 0;
-}
-
-int display_ring(ring_t *ring) 
-{
-    ring_t *tmp;
-    if(!ring){
-        return 0;
-    }
-    tmp = ring;
-    puts("The contents of the ring:");
-    do {
-        printf("%s\n", tmp->string);    
-        tmp = tmp->next;
-    }
-    while(tmp != ring);
-
-    return 0;
-}
-
-int input_and_check_word(node_t *root)
+int input_and_check_word(node_t * root)
 {
     int counter = 0;
     char buffer[MAX_WORD_LENGTH];
 
-    printf("\n==================================================");
-    printf("\nSpecyfy requied word to start search(end, to exit)\n");
-    //while(1) {
-        myfgets(buffer, MAX_WORD_LENGTH);
-        if(!(strncmp(buffer, "end", 3)) ){
-            return 0;
-        }
-        /*else if(strlen(buffer) ){
-            break;
-        }
-        printf("You don't have typed anything\n");
-        */
-    //}
+    printf("\n==================================================\n");
+    printf("Specyfy requied word to start search(end, to exit)\n");
+    printf("==================================================\n");
+    myfgets(buffer, MAX_WORD_LENGTH);
+    if (!(strncmp(buffer, "end", 3))) {
+        return 0;
+    }
+    else if(!(strlen(buffer)) ) {
+       printf("You don't have typed anything, try again\n");
+       return 1;
+    }
+
     printf("The word occurs at:\n");
     counter = walk_through_the_tree(root, buffer);
     printf("\n%d times\n", counter);
 
-    return 0; 
+    return 1;
 }
